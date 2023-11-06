@@ -80,16 +80,6 @@ require('lazy').setup({
   {'m-demare/hlargs.nvim'},
   -- {'wfxr/minimap.vim'},
   {
-  'gorbit99/codewindow.nvim',
-  config = function()
-    local codewindow = require('codewindow')
-    codewindow.setup({
-      auto_enable = true,
-    })
-    codewindow.apply_default_keybinds()
-  end,
-  },
-  {
     'maxmx03/dracula.nvim',
     lazy = false, -- make sure we load this during startup if it is your main colorscheme
     priority = 1000, -- make sure to load this before all the other start plugins
@@ -100,6 +90,18 @@ require('lazy').setup({
 
     end
   },
+  {'simrat39/symbols-outline.nvim'},
+  {
+    'gorbit99/codewindow.nvim',
+    config = function()
+      local codewindow = require('codewindow')
+      codewindow.setup({
+        auto_enable = true,
+      })
+      codewindow.apply_default_keybinds()
+    end,
+  },
+
 })
 
 vim.g.sonokai_style = 'andromeda'
@@ -342,4 +344,13 @@ require('Comment').setup()
 -- vim.cmd([[
 --   autocmd VimEnter * :Minimap
 -- ]])
+
+-- LSP Symbols
+require("symbols-outline").setup({
+  auto_close = true,
+  show_guides = true,
+})
+
+map('n', '<C-q>', ':SymbolsOutline<CR>', { noremap = true })
+
 
