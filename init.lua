@@ -27,7 +27,6 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
 	{"nvim-treesitter/nvim-treesitter", build = ":TSUpdate"},
-	{'dracula/vim', name = 'dracula'},
 	-- LSP Support
 	{
 	    'VonHeikemen/lsp-zero.nvim',
@@ -65,14 +64,50 @@ require('lazy').setup({
 	  priority = 1000,
 	  dependencies = { 'rktjmp/lush.nvim' },
   },
-  {'Yggdroot/indentLine'},
+  -- {'Yggdroot/indentLine'},
   {'prisma/vim-prisma'},
-  { 'Issafalcon/lsp-overloads.nvim'}
+  { 'Issafalcon/lsp-overloads.nvim'},
+  {'nvim-treesitter/nvim-treesitter-refactor'},
+  {'sainnhe/sonokai'},
+  {'akinsho/git-conflict.nvim', version = "*", config = true},
+  {
+    'numToStr/Comment.nvim',
+    opts = {
+        -- add any options here
+    },
+    lazy = false,
+  },
+  {'m-demare/hlargs.nvim'},
+  -- {'wfxr/minimap.vim'},
+  {
+  'gorbit99/codewindow.nvim',
+  config = function()
+    local codewindow = require('codewindow')
+    codewindow.setup({
+      auto_enable = true,
+    })
+    codewindow.apply_default_keybinds()
+  end,
+  },
+  {
+    'maxmx03/dracula.nvim',
+    lazy = false, -- make sure we load this during startup if it is your main colorscheme
+    priority = 1000, -- make sure to load this before all the other start plugins
+    config = function ()
+    local dracula = require 'dracula'
+
+        dracula.setup()
+
+    end
+  },
 })
 
+vim.g.sonokai_style = 'andromeda'
+vim.g.sonokai_better_performance = 1
+
 vim.opt.termguicolors = true
-vim.opt.number = true
-vim.cmd.colorscheme('night-owl')
+vim.cmd.colorscheme('dracula')
+
 
 local TAB_WIDTH = 2
 vim.opt.tabstop = TAB_WIDTH
@@ -145,6 +180,11 @@ lspconfig.cssls.setup {
 lspconfig.tsserver.setup({})
 lspconfig.rust_analyzer.setup({})
 lspconfig.prismals.setup({})
+lspconfig.sqlls.setup({})
+
+vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
 
 -- settuping autocomplete
 local cmp = require('cmp')
@@ -249,7 +289,7 @@ require('bufferline').setup{}
 
 require('nvim-treesitter.configs').setup {
   -- A list of parser names, or "all" (the five listed parsers should always be installed)
-  ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "typescript", "javascript" },
+  ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "typescript", "javascript", "json" },
 
   -- Install parsers synchronously (only applied to `ensure_installed`)
   sync_install = false,
@@ -266,20 +306,23 @@ require('nvim-treesitter.configs').setup {
 
   highlight = {
     enable = true,
-
-    -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
-    -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
-    -- the name of the parser)
-    -- list of language that will be disabled
-    disable = {},
-
     -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
     -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
     -- Using this option may slow down your editor, and you may see some duplicate highlights.
     -- Instead of true it can also be a list of languages
     additional_vim_regex_highlighting = false,
   },
+  refactor = {
+    highlight_definitions = {
+      enable = true,
+      -- Set to false if you have an `updatetime` of ~100.
+      clear_on_cursor_move = true,
+    },
+  },
+
 }
+
+require('hlargs').setup()
 
 -- ALE configs
 vim.g.ale_fixers = {
@@ -289,3 +332,14 @@ vim.g.ale_fixers = {
 }
 
 -- airline configs
+
+-- comment plugin
+require('Comment').setup()
+
+-- minimap setup
+-- vim.g.minimap_width = 20
+-- vim.g.minimap_auto_start_win_enter = 1
+-- vim.cmd([[
+--   autocmd VimEnter * :Minimap
+-- ]])
+
